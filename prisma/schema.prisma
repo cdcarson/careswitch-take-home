@@ -8,6 +8,27 @@ generator client {
 }
 
 model User {
-  id   String @id @default(cuid())
-  name String
+  id    String @id @default(cuid())
+  name  String
+  // @TODO not sure of the collation in sqlite
+  email String @unique
+
+  workspacePermissions WorkspaceUserPermission[]
+}
+
+model Workspace {
+  id              String                    @id @default(cuid())
+  name            String
+  description     String
+  userPermissions WorkspaceUserPermission[]
+}
+
+model WorkspaceUserPermission {
+  workspaceId String
+  userId      String
+
+  user      User      @relation(fields: [userId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@id([workspaceId, userId])
 }
